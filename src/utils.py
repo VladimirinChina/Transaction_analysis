@@ -14,6 +14,17 @@ if not EXCHANGE_API_KEY:
 
 
 def read_operations(file_path: str) -> List[Dict[str, Any]]:
+    """
+    Читает транзакции из Excel-файла и приводит их к стандартному формату.
+
+    Функция:
+    - переименовывает столбцы в удобные имена,
+    - оставляет только нужные поля,
+    - преобразует колонку 'date' в datetime,
+    - заменяет пропущенные значения на пустые строки.
+    :param file_path: Путь к Excel-файлу.
+    :return: Список транзакций в виде словарей.
+    """
     df = pd.read_excel(file_path)
 
     # приводим названия к удобным
@@ -42,6 +53,21 @@ def filter_by_period(
         date_str: str,
         period: str = "M"
 ) -> List[Dict[str, Any]]:
+    """
+    Фильтрует транзакции по заданному периоду.
+
+    Поддерживаемые периоды:
+        - "M" — месяц
+        - "Y" — год
+        - "W" — неделя
+        - "ALL" — все доступные данные
+    :param operations: Список транзакций.
+    :param date_str: Целевая дата в формате 'DD.MM.YYYY'.
+    :param period: Тип периода.
+    :return: Отфильтрованный список транзакций.
+
+    :raises ValueError: Если передан неподдерживаемый период.
+    """
     target_date = datetime.strptime(date_str, "%d.%m.%Y")
 
     if period == "M":
@@ -62,6 +88,16 @@ def filter_by_period(
 
 
 def get_currency_rates(currencies: List[str]) -> List[Dict[str, Any]]:
+    """
+    Получает текущие курсы валют относительно рубля.
+
+    Функция отправляет запрос к внешнему API и возвращает
+    курсы только для указанных валют.
+    :param currencies: Список кодов валют (например, ["USD", "EUR"]).
+    :return: Список словарей со структурой:
+        - currency: код валюты
+        - rate: курс
+    """
     response = requests.get("https://api.exchangerate-api.com/v4/latest/RUB")
     data = response.json()
 
@@ -77,6 +113,15 @@ def get_currency_rates(currencies: List[str]) -> List[Dict[str, Any]]:
 
 
 def get_stock_prices(stocks: List[str]) -> List[Dict[str, Any]]:
+    """
+    Получает текущие цены акций через API Alpha Vantage.
+
+    Для работы требуется наличие переменной окружения EXCHANGE_API_KEY.
+    :param stocks: Список тикеров акций (например, ["AAPL", "TSLA"]).
+    :return: Список словарей со структурой:
+        - stock: тикер
+        - price: цена акции
+    """
     result = []
 
     for stock in stocks:

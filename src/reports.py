@@ -14,6 +14,15 @@ DATA_DIR = "data"
 
 
 def report_to_file(filename: Optional[str] = None) -> Callable[[Callable[..., RT]], Callable[..., RT]]:
+    """
+    Декоратор для функций-отчетов, который сохраняет результат их выполнения в файл.
+
+    Если передано имя файла, результат будет записан в него.
+    Если имя файла не указано, оно формируется автоматически на основе
+    имени функции и текущей даты и времени.
+    :param filename: Необязательное имя файла для сохранения результата.
+    :return: Декорированная функция, сохраняющая результат в файл.
+    """
     def decorator(func: Callable[..., RT]) -> Callable[..., RT]:
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> RT:
@@ -44,6 +53,24 @@ def spending_by_category(
     category: str,
     date: Optional[str] = None
 ) -> str:
+    """
+    Рассчитывает сумму трат по заданной категории за последние 3 месяца.
+
+    Функция фильтрует транзакции по:
+    - категории,
+    - диапазону дат (последние 90 дней от указанной даты),
+    - отрицательным значениям (расходы).
+
+    Если дата не передана, используется текущая дата.
+    :param transactions: DataFrame с транзакциями.
+        Ожидаются столбцы: 'date', 'category', 'amount'.
+    :param category: Название категории для фильтрации.
+    :param date: Конечная дата в формате 'YYYY-MM-DD'.
+    :return: JSON-строка со следующими полями:
+        - category: категория
+        - total_spent: сумма трат
+        - transactions_count: количество операций
+    """
     logger.info("Расчет расходов по категориям '%s'" % category)
 
     #  копия, чтобы не менять оригинальный DataFrame и избежать предупреждений
@@ -76,6 +103,21 @@ def spending_by_category(
 
 
 def get_expenses_summary(operations: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """
+    Формирует сводный отчет по расходам.
+
+    Учитываются только отрицательные транзакции (расходы).
+    Рассчитывается общая сумма расходов и распределение по категориям.
+
+    Категории "Наличные" и "Переводы" выделяются отдельно.
+    Основной список содержит топ-7 категорий по сумме трат,
+    остальные объединяются в категорию "Остальное".
+    :param operations: Список транзакций.
+    :return: Словарь со структурой:
+        - total_amount: общая сумма расходов
+        - main: список основных категорий
+        - transfers_and_cash: список специальных категорий
+    """
     # только траты
     expenses = [op for op in operations if op.get("amount", 0) < 0]
 
@@ -138,6 +180,16 @@ def get_expenses_summary(operations: List[Dict[str, Any]]) -> Dict[str, Any]:
 
 
 def get_income_summary(operations: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """
+    Формирует сводный отчет по доходам.
+
+    Учитываются только положительные транзакции (доходы).
+    Рассчитывается общая сумма и распределение по категориям.
+    :param operations: Список транзакций.
+    :return: Словарь со структурой:
+        - total_amount: общая сумма доходов
+        - main: список категорий доходов
+    """
     income = [op for op in operations if op.get("amount", 0) > 0]
 
     total_amount = int(sum(op.get("amount", 0) for op in income))
