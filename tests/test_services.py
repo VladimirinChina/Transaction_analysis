@@ -1,7 +1,8 @@
 import json
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 import pytest
+
 from src.services import find_transactions_by_phone
 
 

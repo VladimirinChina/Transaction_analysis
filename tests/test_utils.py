@@ -1,10 +1,11 @@
-import pytest
 from datetime import datetime
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 import pandas as pd
-from src.utils import read_operations, filter_by_period
-from src.utils import get_stock_prices
-from src.utils import get_currency_rates
+import pytest
+
+from src.utils import filter_by_period, get_currency_rates, get_stock_prices, read_operations
+
 # Тесты для read_operations с использованием mock
 
 

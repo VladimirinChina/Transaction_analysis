@@ -1,10 +1,11 @@
-import pytest
 import json
-import pandas as pd
 from typing import Any, Dict, List
+from unittest.mock import mock_open, patch
 
-from src.reports import spending_by_category, get_expenses_summary
-from unittest.mock import patch, mock_open
+import pandas as pd
+import pytest
+
+from src.reports import get_expenses_summary, spending_by_category
 
 
 @pytest.fixture

@@ -1,10 +1,10 @@
+import os
 from datetime import datetime, timedelta
-from typing import List, Dict, Any, cast
-from dotenv import load_dotenv
+from typing import Any, Dict, List, cast
 
 import pandas as pd
 import requests
-import os
+from dotenv import load_dotenv
 
 load_dotenv()
 EXCHANGE_API_KEY = os.getenv("EXCHANGE_API_KEY")

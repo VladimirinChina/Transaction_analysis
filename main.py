@@ -1,9 +1,9 @@
-from src.utils import read_operations, filter_by_period
-from src.views import get_events_page
-from src.services import find_transactions_by_phone
-from src.reports import spending_by_category
-
 import pandas as pd
+
+from src.reports import spending_by_category
+from src.services import find_transactions_by_phone
+from src.utils import filter_by_period, read_operations
+from src.views import get_events_page
 
 
 def main() -> None:

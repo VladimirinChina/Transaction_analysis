@@ -3,12 +3,7 @@ import logging
 from typing import Any, Dict, cast
 
 from src.reports import get_expenses_summary, get_income_summary
-from src.utils import (
-    filter_by_period,
-    get_currency_rates,
-    get_stock_prices,
-    read_operations,
-)
+from src.utils import filter_by_period, get_currency_rates, get_stock_prices, read_operations
 
 # Настройка логирования для отслеживания ошибок в консоли
 logger = logging.getLogger(__name__)

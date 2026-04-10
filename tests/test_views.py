@@ -1,5 +1,6 @@
 import json
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 from src.views import get_events_page
 
 
