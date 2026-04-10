@@ -3,7 +3,8 @@ from datetime import datetime
 from unittest.mock import patch, MagicMock
 import pandas as pd
 from src.utils import read_operations, filter_by_period
-
+from src.utils import get_stock_prices
+from src.utils import get_currency_rates
 # Тесты для read_operations с использованием mock
 
 
@@ -78,3 +79,27 @@ def test_filter_by_all_time(sample_data: list[dict]) -> None:
     """Тест периода ALL."""
     result = filter_by_period(sample_data, "20.05.2024", "ALL")
     assert len(result) == 4
+
+
+@patch("src.utils.requests.get")
+def test_get_stock_prices(mock_get: MagicMock) -> None:
+    mock_get.return_value.json.return_value = {
+        "Global Quote": {
+            "05. price": "150.00"
+        }
+    }
+
+    result = get_stock_prices(["AAPL"])
+
+    assert result == [
+        {"stock": "AAPL", "price": 150.0}
+    ]
+
+
+@patch("src.utils.requests.get")
+def test_get_currency_rates_empty(mock_get: MagicMock) -> None:
+    mock_get.return_value.json.return_value = {"rates": {}}
+
+    result = get_currency_rates(["USD"])
+
+    assert result == []

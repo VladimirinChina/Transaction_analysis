@@ -61,3 +61,36 @@ def get_expenses_summary(operations: List[Dict[str, Any]]) -> Dict[str, Any]:
             reverse=True
         )
     }
+
+
+def get_income_summary(operations: List[Dict[str, Any]]) -> Dict[str, Any]:
+    income = [op for op in operations if op.get("amount", 0) > 0]
+
+    total_amount = int(sum(op.get("amount", 0) for op in income))
+
+    category_sums: Dict[str, float] = {}
+
+    for op in income:
+        category = op.get("category", "Без категории")
+        amount = op.get("amount", 0)
+
+        if category not in category_sums:
+            category_sums[category] = 0
+
+        category_sums[category] += amount
+
+    sorted_categories = sorted(
+        category_sums.items(),
+        key=lambda x: x[1],
+        reverse=True
+    )
+
+    main = [
+        {"category": cat, "amount": int(amount)}
+        for cat, amount in sorted_categories
+    ]
+
+    return {
+        "total_amount": total_amount,
+        "main": main
+    }
