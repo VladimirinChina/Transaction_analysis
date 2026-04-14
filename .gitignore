@@ -217,3 +217,7 @@ __marimo__/
 .streamlit/secrets.toml
 
 .DS_Store
+
+*.json
+!user_settings.json
+!*.example
